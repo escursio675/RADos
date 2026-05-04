@@ -67,70 +67,55 @@ UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN
 };
 
 
-void initKeyboard(){
-    capsOn = false;
+#include "stdint.h"
+#include "util.h"
+#include "interrupts/idt.h"
+#include "stdlib/stdio.h"
+#include "keyboard.h"
+#include "shell.h"           // ADD
+
+bool capsOn;
+bool capsLock;
+
+// ... (keep all your existing scancode tables and constants) ...
+
+void initKeyboard() {
+    capsOn   = false;
     capsLock = false;
     irq_install_handler(1, &keyboardHandler);
 }
 
-void keyboardHandler(struct InterruptRegisters *regs){
+void keyboardHandler(struct InterruptRegisters *regs) {
     char scanCode = inPortB(0x60) & 0x7F;
-    //extract the scan code of key pressed
-    char press =  inPortB(0x60) & 0x80;
-    //whether pressed down or released
+    char press    = inPortB(0x60) & 0x80;
 
-    //printf("Scan code: %d, Press: %d\r\n", scanCode, press);
-    //print the scancode
-
-    switch(scanCode){
+    switch (scanCode) {
+        // ESC — send char 27 to shell
         case 1:
-        case 29:
-        case 56:
-        case 59:
-        case 60:
-        case 61:
-        case 62:
-        case 63:
-        case 64:
-        case 65:
-        case 66:
-        case 67:
-        case 68:
-        case 87:
-        case 88:
+            if (press == 0) shellHandleKey(27);
             break;
-        //ignore the above cases
+        case 29: case 56:
+        case 59: case 60: case 61: case 62: case 63:
+        case 64: case 65: case 66: case 67: case 68:
+        case 87: case 88:
+            break;
         case 42:
-            //shift key
-            if(press == 0){
-                capsOn = true;
-            }
-            else{
-                capsOn = false;
-            }
+            capsOn = (press == 0);
             break;
         case 58:
-            //CapsLock
-            if(!capsLock && press == 0){
-                capsLock = true;
-            }
-            else if(capsLock && press == 0)
-            {
-                capsLock = false;
-            }
+            if (!capsLock && press == 0) capsLock = true;
+            else if (capsLock && press == 0) capsLock = false;
             break;
         default:
-            if(press == 0){
-                if (capsOn || capsLock){
-                    printf("%c", uppercase[scanCode]);
-                }
-                else{
-                    printf("%c", lowercase[scanCode]);
+            if (press == 0) {
+                uint32_t key = (capsOn || capsLock)
+                             ? uppercase[scanCode]
+                             : lowercase[scanCode];
+
+                // Only forward actual printable/control chars
+                if (key < 0xFF) {
+                    shellHandleKey((char) key);
                 }
             }
-
-
     }
 }
-
-//every key pressed as firstly a code called the scan code and secondly whether the key was pressed down or up

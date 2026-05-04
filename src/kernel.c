@@ -9,15 +9,21 @@
 #include "multiboot.h"
 #include "memory.h"
 #include "util.h"
+#include "process.h"
+#include "scheduler.h"
+#include "shell.h"
 
 void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 
-void kmain(uint32_t magic, struct multiboot_info* bootInfo){
+void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
+    vgaInit();
     initGdt();
-    print("GDT is done!\r\n");
     initIdt();
-    initTimer();
+    initMemory(bootInfo->mem_upper * 1024, 0x200000);
+    kmallocInit(0x100000);
+    schedulerInit();
     initKeyboard();
-
-    for(;;);
+    shellInit();
+    initTimer();
+    for (;;) asm volatile("hlt");
 }
