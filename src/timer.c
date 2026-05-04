@@ -7,6 +7,14 @@
 uint64_t ticks;
 const uint32_t freq = 100;
 
+uint64_t getTicks(){
+    return ticks;
+}
+
+uint32_t getFreq(){
+    return freq;
+}
+
 void onIrq0(struct InterruptRegisters *regs){
     ticks += 1;
 }

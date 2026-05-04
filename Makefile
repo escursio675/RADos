@@ -14,6 +14,8 @@ kernel:
 	gcc $(CFLAGS) -c src/timer.c -o timer.o
 	gcc $(CFLAGS) -c src/keyboard.c -o keyboard.o
 	gcc $(CFLAGS) -c src/stdlib/stdio.c -o stdio.o
+	gcc $(CFLAGS) -c src/commands/help.c -o help.o
+	gcc $(CFLAGS) -c src/commands/uptime.c -o uptime.o
 
 boot: 
 	nasm -f elf32 src/boot.s -o boot.o
@@ -22,7 +24,7 @@ boot:
 
 
 image:
-	ld -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o keyboard.o stdio.o
+	ld -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o keyboard.o stdio.o help.o uptime.o
 	mv kernel RADOS/boot/kernel
 	grub-mkrescue -o kernel.iso RADOS/
 	rm *.o

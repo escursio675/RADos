@@ -10,6 +10,9 @@
 #include "memory.h"
 #include "util.h"
 
+#include "commands/help.h"
+#include "commands/uptime.h"
+
 void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 
 void kmain(uint32_t magic, struct multiboot_info* bootInfo){
@@ -18,6 +21,10 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo){
     initIdt();
     initTimer();
     initKeyboard();
+    help();
+
+    printf("\n\nUptime: %lds", uptime());
+    
 
     for(;;);
 }
