@@ -12,6 +12,7 @@
 
 #include "commands/help.h"
 #include "commands/uptime.h"
+#include "commands/clear.h"
 
 void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 
@@ -22,8 +23,10 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo){
     initTimer();
     initKeyboard();
     help();
-
     printf("\n\nUptime: %lds", uptime());
+    clear();
+
+    printf("> ");
     
 
     for(;;);

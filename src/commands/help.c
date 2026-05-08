@@ -4,4 +4,5 @@
 void help(){
     print("\nWelcome to RADos! The Commands List is:\r\n");
     print("\nhelp\tprints the Commands List(Hint: You are using it right now :)");
+    print("\nuptime\tgenerates the uptime(in seconds) since last boot");
 }
