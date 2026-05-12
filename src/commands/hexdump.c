@@ -13,7 +13,7 @@ void hexdump(void* addr, uint32_t length) {
         for (uint32_t j = 0; j < 16; j++) {
             if (i + j < length) {
                 uint8_t byte = *(ptr + i + j);
-                printf("%02x ", byte);
+                printf("%x ", byte);
             } else {
                 printf("   "); // padding for alignment
             }

@@ -30,7 +30,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo){
 
     //printf("\n\nUptime: %lds", uptime());
 
-    greet();
+    //greet();
 
     //clear();
 
